@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background-color: #fdfaf3;
+  color: #3a0d16;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.chip {
+  @apply select-none rounded-full border px-3.5 py-2 text-sm font-medium transition-all active:scale-95;
+}
+
+.chip-idle {
+  @apply border-vino-100 bg-white text-vino-700 hover:border-vino-400;
+}
+
+.chip-active {
+  @apply border-vino-700 bg-vino-700 text-white shadow-card;
+}
+
+.section-card {
+  @apply rounded-3xl border border-vino-100 bg-white/80 p-4 shadow-sm;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+.animate-float {
+  animation: float 3.2s ease-in-out infinite;
+}
