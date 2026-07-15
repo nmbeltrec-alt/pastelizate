@@ -105,7 +105,8 @@ export default function PastelizateApp() {
           const hatW = faceW * 2.05;
           const hatH = hatImg.height * (hatW / hatImg.width);
           const hatX = faceCx - hatW / 2;
-          const hatY = faceCy - faceW * 1.05 - hatH * 0.72;
+          const hatBottomY = y + h * 0.13;
+          const hatY = hatBottomY - hatH * 0.88;
           ctx.drawImage(hatImg, hatX, hatY, hatW, hatH);
         }
 
