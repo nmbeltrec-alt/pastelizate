@@ -136,8 +136,8 @@ export default function PastelizateApp() {
 
         // sombrero: dibujado, encima de la cabeza
         if (sel.sombrero === 'tropical') {
-          const hatBottomY = y + h * 0.13;
-          drawSombreroTropical(ctx, faceCx, hatBottomY, faceW);
+          const hatCy = y + h * 0.22;
+          drawSombreroTropical(ctx, faceCx, hatCy, faceW);
         }
 
         // gafas: dibujadas, sobre los ojos
@@ -147,9 +147,9 @@ export default function PastelizateApp() {
 
         // accesorio: dibujado, insignia flotante abajo a la derecha
         if (sel.accesorio !== 'ninguno') {
-          const accX = x + w * 0.82;
-          const accY = y + h * 0.78;
-          drawAccesorio(ctx, sel.accesorio as AccesorioId, accX, accY, w * 0.36);
+          const accX = x + w * 0.74;
+          const accY = y + h * 0.74;
+          drawAccesorio(ctx, sel.accesorio as AccesorioId, accX, accY, w * 0.32);
         }
 
         // frase: banner recortado, debajo del personaje

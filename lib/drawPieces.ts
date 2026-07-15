@@ -282,29 +282,30 @@ export function drawBate(
   ctx.shadowBlur = size * 0.04;
 
   const grad = ctx.createLinearGradient(0, -len / 2, 0, len / 2);
-  grad.addColorStop(0, '#c99a5b');
-  grad.addColorStop(1, '#8a5a2b');
+  grad.addColorStop(0, '#8a5a2b');
+  grad.addColorStop(1, '#c99a5b');
   ctx.fillStyle = grad;
 
+  // mango delgado cerca de la mano (arriba, -len/2) ensanchando hacia el barril (abajo)
   ctx.beginPath();
-  ctx.moveTo(-size * 0.05, -len / 2);
-  ctx.quadraticCurveTo(-size * 0.16, -len * 0.1, -size * 0.13, len / 2 - size * 0.05);
-  ctx.quadraticCurveTo(0, len / 2, size * 0.13, len / 2 - size * 0.05);
-  ctx.quadraticCurveTo(size * 0.16, -len * 0.1, size * 0.05, -len / 2);
+  ctx.moveTo(-size * 0.045, -len / 2);
+  ctx.quadraticCurveTo(-size * 0.07, len * 0.15, -size * 0.16, len / 2 - size * 0.04);
+  ctx.quadraticCurveTo(0, len / 2, size * 0.16, len / 2 - size * 0.04);
+  ctx.quadraticCurveTo(size * 0.07, len * 0.15, size * 0.045, -len / 2);
   ctx.closePath();
   ctx.fill();
   ctx.strokeStyle = 'rgba(58,13,22,0.35)';
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  // agarre (mango)
+  // agarre (mango) cerca de la parte delgada, arriba
   ctx.strokeStyle = '#5c1523';
-  ctx.lineWidth = size * 0.05;
+  ctx.lineWidth = size * 0.045;
   for (let i = 0; i < 4; i++) {
-    const yy = len / 2 - size * 0.1 - i * size * 0.11;
+    const yy = -len / 2 + size * 0.14 + i * size * 0.1;
     ctx.beginPath();
-    ctx.moveTo(-size * 0.12, yy);
-    ctx.lineTo(size * 0.12, yy);
+    ctx.moveTo(-size * 0.08, yy);
+    ctx.lineTo(size * 0.08, yy);
     ctx.stroke();
   }
   ctx.restore();
