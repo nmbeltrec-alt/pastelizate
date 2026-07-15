@@ -19,65 +19,6 @@ function roundRect(
   ctx.closePath();
 }
 
-// ---------- Sombrero tropical (tipo panamá/boater) ----------
-export function drawSombreroTropical(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  w: number // ancho de referencia de la cara
-) {
-  const brimW = w * 2.1;
-  const brimH = w * 0.42;
-  const crownW = w * 1.5;
-  const crownH = w * 0.62;
-  const crownY = cy - brimH * 0.32;
-
-  ctx.save();
-  // sombra suave
-  ctx.shadowColor = 'rgba(58,13,22,0.18)';
-  ctx.shadowBlur = w * 0.06;
-  ctx.shadowOffsetY = w * 0.03;
-
-  // copa (crown)
-  const crownGrad = ctx.createLinearGradient(0, crownY - crownH, 0, crownY);
-  crownGrad.addColorStop(0, '#e9c982');
-  crownGrad.addColorStop(1, '#d9b060');
-  ctx.fillStyle = crownGrad;
-  ctx.beginPath();
-  ctx.moveTo(cx - crownW / 2, crownY);
-  ctx.quadraticCurveTo(cx - crownW / 2, crownY - crownH, cx, crownY - crownH * 1.08);
-  ctx.quadraticCurveTo(cx + crownW / 2, crownY - crownH, cx + crownW / 2, crownY);
-  ctx.closePath();
-  ctx.fill();
-
-  // banda vino
-  ctx.fillStyle = '#7a1f30';
-  ctx.beginPath();
-  ctx.ellipse(cx, crownY, crownW / 2, brimH * 0.22, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  // ala (brim)
-  ctx.save();
-  ctx.shadowColor = 'rgba(58,13,22,0.22)';
-  ctx.shadowBlur = w * 0.05;
-  ctx.shadowOffsetY = w * 0.04;
-  const brimGrad = ctx.createLinearGradient(0, cy - brimH / 2, 0, cy + brimH / 2);
-  brimGrad.addColorStop(0, '#f1d79a');
-  brimGrad.addColorStop(1, '#e2bb74');
-  ctx.fillStyle = brimGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, brimW / 2, brimH / 2, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  // agujero central (para que la copa se vea asentada)
-  ctx.fillStyle = 'rgba(0,0,0,0.06)';
-  ctx.beginPath();
-  ctx.ellipse(cx, cy - brimH * 0.05, crownW / 2 + 2, brimH * 0.16, 0, 0, Math.PI * 2);
-  ctx.fill();
-}
-
 // ---------- Gafas de sol ----------
 export function drawGafasSol(
   ctx: CanvasRenderingContext2D,
@@ -265,52 +206,6 @@ function drawStar(
   ctx.fill();
 }
 
-// ---------- Bate de béisbol ----------
-export function drawBate(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  size: number
-) {
-  const len = size * 1.6;
-  const angle = -0.55;
-
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(angle);
-  ctx.shadowColor = 'rgba(58,13,22,0.25)';
-  ctx.shadowBlur = size * 0.04;
-
-  const grad = ctx.createLinearGradient(0, -len / 2, 0, len / 2);
-  grad.addColorStop(0, '#8a5a2b');
-  grad.addColorStop(1, '#c99a5b');
-  ctx.fillStyle = grad;
-
-  // mango delgado cerca de la mano (arriba, -len/2) ensanchando hacia el barril (abajo)
-  ctx.beginPath();
-  ctx.moveTo(-size * 0.045, -len / 2);
-  ctx.quadraticCurveTo(-size * 0.07, len * 0.15, -size * 0.16, len / 2 - size * 0.04);
-  ctx.quadraticCurveTo(0, len / 2, size * 0.16, len / 2 - size * 0.04);
-  ctx.quadraticCurveTo(size * 0.07, len * 0.15, size * 0.045, -len / 2);
-  ctx.closePath();
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(58,13,22,0.35)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  // agarre (mango) cerca de la parte delgada, arriba
-  ctx.strokeStyle = '#5c1523';
-  ctx.lineWidth = size * 0.045;
-  for (let i = 0; i < 4; i++) {
-    const yy = -len / 2 + size * 0.14 + i * size * 0.1;
-    ctx.beginPath();
-    ctx.moveTo(-size * 0.08, yy);
-    ctx.lineTo(size * 0.08, yy);
-    ctx.stroke();
-  }
-  ctx.restore();
-}
-
 // ---------- Coco ----------
 export function drawCoco(
   ctx: CanvasRenderingContext2D,
@@ -384,7 +279,7 @@ export function drawCoco(
   ctx.fill();
 }
 
-export type AccesorioId = 'ninguno' | 'bandera-rd' | 'bandera-pr' | 'bate' | 'coco';
+export type AccesorioId = 'ninguno' | 'bandera-rd' | 'bandera-pr' | 'coco';
 
 export function drawAccesorio(
   ctx: CanvasRenderingContext2D,
@@ -399,9 +294,6 @@ export function drawAccesorio(
       break;
     case 'bandera-pr':
       drawBanderaPR(ctx, x, y, size);
-      break;
-    case 'bate':
-      drawBate(ctx, x, y, size);
       break;
     case 'coco':
       drawCoco(ctx, x, y, size);

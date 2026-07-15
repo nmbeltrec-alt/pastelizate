@@ -1,7 +1,7 @@
 // Catálogo de piezas para el armador de Pastelízate.
 // Las expresiones son recortes reales de la hoja de referencia (con bordes
-// suavizados para que encajen en cualquier base). Sombrero, gafas, banderas,
-// bate y coco se dibujan de forma vectorial en canvas (ver lib/drawPieces.ts).
+// suavizados para que encajen en cualquier base). Gafas y banderas/coco se
+// dibujan de forma vectorial en canvas (ver lib/drawPieces.ts).
 
 export type FaceAnchor = { x: number; y: number; w: number };
 
@@ -18,19 +18,31 @@ export const BASES: Base[] = [
   { id: 'base_3', label: 'Paz y amor', file: '/bases/base_3.png', face: { x: 0.47, y: 0.38, w: 0.44 } },
 ];
 
+// Cada expresión es un recorte real de la hoja de referencia con relleno/aire
+// alrededor distinto. Para que todas queden centradas y del mismo tamaño sin
+// importar la base, guardamos dónde caen los ojos dentro de CADA imagen:
+// - eyeMidX / eyeMidY: punto medio entre los dos ojos, como fracción del
+//   ancho/alto de la propia imagen (0..1).
+// - eyeDist: distancia entre ojos, como fracción del ancho de la propia imagen.
+// Con esto, al dibujar, escalamos y posicionamos cada imagen para que su
+// punto medio de ojos caiga siempre exactamente en el mismo lugar de la cara
+// base, sin importar cuánto aire tenga cada recorte alrededor.
 export type Expresion = {
   id: string;
   label: string;
   emoji: string;
-  file: string | null; // null = enamorado, se dibuja con ojos de corazón sobre la foto feliz
+  file: string;
+  eyeMidX: number;
+  eyeMidY: number;
+  eyeDist: number;
 };
 
 export const EXPRESIONES: Expresion[] = [
-  { id: 'feliz', label: 'Feliz', emoji: '😄', file: '/faces/face_feliz.png' },
-  { id: 'guino', label: 'Guiño coqueto', emoji: '😉', file: '/faces/face_guino.png' },
-  { id: 'sorpresa', label: 'Sorpresa', emoji: '😲', file: '/faces/face_sorpresa.png' },
-  { id: 'enamorado', label: 'Enamorado', emoji: '😍', file: '/faces/face_feliz.png' },
-  { id: 'relax', label: 'Relax', emoji: '😌', file: '/faces/face_relax.png' },
+  { id: 'feliz', label: 'Feliz', emoji: '😄', file: '/faces/face_feliz.png', eyeMidX: 0.37, eyeMidY: 0.465, eyeDist: 0.40 },
+  { id: 'guino', label: 'Guiño coqueto', emoji: '😉', file: '/faces/face_guino.png', eyeMidX: 0.465, eyeMidY: 0.365, eyeDist: 0.43 },
+  { id: 'sorpresa', label: 'Sorpresa', emoji: '😲', file: '/faces/face_sorpresa.png', eyeMidX: 0.305, eyeMidY: 0.465, eyeDist: 0.35 },
+  { id: 'enamorado', label: 'Enamorado', emoji: '😍', file: '/faces/face_enamorado.png', eyeMidX: 0.50, eyeMidY: 0.458, eyeDist: 0.231 },
+  { id: 'relax', label: 'Relax', emoji: '😌', file: '/faces/face_relax.png', eyeMidX: 0.475, eyeMidY: 0.41, eyeDist: 0.41 },
 ];
 
 export type PiezaDibujada = {
@@ -38,11 +50,6 @@ export type PiezaDibujada = {
   label: string;
   emoji: string;
 };
-
-export const SOMBREROS: PiezaDibujada[] = [
-  { id: 'ninguno', label: 'Ninguno', emoji: '' },
-  { id: 'tropical', label: 'Sombrero tropical', emoji: '👒' },
-];
 
 export const GAFAS: PiezaDibujada[] = [
   { id: 'ninguna', label: 'Ninguna', emoji: '' },
@@ -54,21 +61,7 @@ export const ACCESORIOS: PiezaDibujada[] = [
   { id: 'bandera-rd', label: 'Bandera RD', emoji: '🇩🇴' },
   { id: 'bandera-pr', label: 'Bandera PR', emoji: '🇵🇷' },
   { id: 'coco', label: 'Coco', emoji: '🥥' },
-  { id: 'bate', label: 'Bate', emoji: '⚾' },
 ];
-
-export const FRASES: PiezaDibujada[] = [
-  { id: 'ninguna', label: 'Ninguna', emoji: '' },
-  { id: 'hecho-con-amor', label: 'Hecho con amor', emoji: '' },
-  { id: 'dos-islas', label: 'De dos islas', emoji: '' },
-  { id: 'bonita', label: 'Bonita por dentro', emoji: '' },
-];
-
-export const FRASE_IMG: Record<string, string> = {
-  'hecho-con-amor': '/pieces/final_hecho_amor.png',
-  'dos-islas': '/pieces/final_dos_islas.png',
-  bonita: '/pieces/final_bonita.png',
-};
 
 export const FONDOS = [
   { id: 'crema', label: 'Crema', color: '#f8efdc' },

@@ -1,22 +1,18 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  ACCESORIOS,
-  BASES,
-  EXPRESIONES,
-  FONDOS,
-  FRASE_IMG,
-  FRASES,
-  GAFAS,
-  SOMBREROS,
-} from '@/lib/pieces';
-import { drawAccesorio, drawGafasSol, drawSombreroTropical, AccesorioId } from '@/lib/drawPieces';
+import { ACCESORIOS, BASES, EXPRESIONES, FONDOS, GAFAS } from '@/lib/pieces';
+import { drawAccesorio, drawGafasSol, AccesorioId } from '@/lib/drawPieces';
+
+// Fracción del "ancho de cara" de cada base que define la distancia objetivo
+// entre ojos en el canvas final. Es el único número que hay que tocar si
+// alguna vez se quiere que las expresiones se vean un poco más grandes o
+// pequeñas sobre el cuerpo — afecta a todas las expresiones por igual.
+const EYE_DIST_FACTOR = 0.54;
 
 type Seleccion = {
   base: string;
   expresion: string;
-  sombrero: string;
   gafas: string;
   accesorio: string;
   frase: string;
@@ -34,29 +30,13 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-function drawHeartEye(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
-  ctx.fillStyle = '#c23b4a';
-  ctx.beginPath();
-  const s = r * 0.95;
-  ctx.moveTo(x, y + s * 0.6);
-  ctx.bezierCurveTo(x - s, y - s * 0.4, x - s * 0.5, y - s, x, y - s * 0.25);
-  ctx.bezierCurveTo(x + s * 0.5, y - s, x + s, y - s * 0.4, x, y + s * 0.6);
-  ctx.closePath();
-  ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,0.55)';
-  ctx.beginPath();
-  ctx.ellipse(x - s * 0.28, y - s * 0.25, s * 0.14, s * 0.18, -0.5, 0, Math.PI * 2);
-  ctx.fill();
-}
-
 export default function PastelizateApp() {
   const [sel, setSel] = useState<Seleccion>({
     base: BASES[2].id,
     expresion: 'feliz',
-    sombrero: 'ninguno',
     gafas: 'ninguna',
     accesorio: 'ninguno',
-    frase: 'ninguna',
+    frase: '',
     fondo: 'crema',
     nombre: '',
   });
@@ -114,31 +94,24 @@ export default function PastelizateApp() {
         const faceCx = x + baseObj.face.x * w;
         const faceCy = y + baseObj.face.y * h;
         const faceW = baseObj.face.w * w;
+        // distancia objetivo entre ojos en el canvas: igual para cualquier
+        // expresión y cualquier base, así todas se ven del mismo tamaño y
+        // centradas en el mismo punto exacto de la cara.
+        const targetEyeDist = faceW * EYE_DIST_FACTOR;
 
-        // expresión: recorte real de foto, escalado sobre la cara
-        if (expresionObj.file) {
-          const faceImg = await loadImage(expresionObj.file);
-          if (cancelled) return;
-          const fW = faceW * 1.35;
-          const fH = faceImg.height * (fW / faceImg.width);
-          const fX = faceCx - fW / 2;
-          const fY = faceCy - fH * 0.42;
-          ctx.drawImage(faceImg, fX, fY, fW, fH);
-        }
-
-        // enamorado: ojos de corazón dibujados sobre la foto feliz
-        if (sel.expresion === 'enamorado') {
-          const eyeR = faceW * 0.15;
-          const eyeDx = faceW * 0.24;
-          drawHeartEye(ctx, faceCx - eyeDx, faceCy, eyeR);
-          drawHeartEye(ctx, faceCx + eyeDx, faceCy, eyeR);
-        }
-
-        // sombrero: dibujado, encima de la cabeza
-        if (sel.sombrero === 'tropical') {
-          const hatCy = y + h * 0.22;
-          drawSombreroTropical(ctx, faceCx, hatCy, faceW);
-        }
+        // expresión: recorte real de foto. Escalamos y posicionamos cada
+        // imagen para que su punto medio de ojos (eyeMidX/eyeMidY, medido de
+        // antemano en cada recorte) caiga siempre en (faceCx, faceCy) con la
+        // misma distancia entre ojos — sin importar cuánto aire tenga el
+        // recorte alrededor de la cara.
+        const faceImg = await loadImage(expresionObj.file);
+        if (cancelled) return;
+        const faceScale = targetEyeDist / (expresionObj.eyeDist * faceImg.width);
+        const fW = faceImg.width * faceScale;
+        const fH = faceImg.height * faceScale;
+        const fX = faceCx - expresionObj.eyeMidX * fW;
+        const fY = faceCy - expresionObj.eyeMidY * fH;
+        ctx.drawImage(faceImg, fX, fY, fW, fH);
 
         // gafas: dibujadas, sobre los ojos
         if (sel.gafas === 'sol') {
@@ -152,23 +125,48 @@ export default function PastelizateApp() {
           drawAccesorio(ctx, sel.accesorio as AccesorioId, accX, accY, w * 0.32);
         }
 
-        // frase: banner recortado, debajo del personaje
+        // frase: texto libre en un banner debajo del personaje
         let fraseBottom = y + h;
-        const fraseFile = FRASE_IMG[sel.frase];
-        if (fraseFile) {
-          const frImg = await loadImage(fraseFile);
-          if (cancelled) return;
-          const frW = w * 0.85;
-          const frH = frImg.height * (frW / frImg.width);
-          const frX = SIZE / 2 - frW / 2;
-          const frY = y + h - frH * 0.15;
-          ctx.drawImage(frImg, frX, frY, frW, frH);
-          fraseBottom = frY + frH;
+        const fraseTexto = sel.frase.trim();
+        if (fraseTexto) {
+          const bannerY = y + h - 6;
+          const bannerH = 70;
+          const bannerW = Math.min(w * 0.95, SIZE - 60);
+          const bannerX = SIZE / 2 - bannerW / 2;
+          ctx.save();
+          ctx.fillStyle = 'rgba(255,255,255,0.92)';
+          ctx.strokeStyle = '#e7cfa1';
+          ctx.lineWidth = 3;
+          const r = bannerH / 2;
+          ctx.beginPath();
+          ctx.moveTo(bannerX + r, bannerY);
+          ctx.arcTo(bannerX + bannerW, bannerY, bannerX + bannerW, bannerY + bannerH, r);
+          ctx.arcTo(bannerX + bannerW, bannerY + bannerH, bannerX, bannerY + bannerH, r);
+          ctx.arcTo(bannerX, bannerY + bannerH, bannerX, bannerY, r);
+          ctx.arcTo(bannerX, bannerY, bannerX + bannerW, bannerY, r);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          let fontSize = 34;
+          ctx.font = `italic 600 ${fontSize}px Georgia, serif`;
+          const maxTextW = bannerW - 48;
+          while (ctx.measureText(fraseTexto).width > maxTextW && fontSize > 16) {
+            fontSize -= 1;
+            ctx.font = `italic 600 ${fontSize}px Georgia, serif`;
+          }
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillStyle = '#5c1523';
+          ctx.fillText(fraseTexto, SIZE / 2, bannerY + bannerH / 2, maxTextW);
+          ctx.restore();
+          fraseBottom = bannerY + bannerH;
         }
 
         if (sel.nombre.trim()) {
           ctx.font = 'bold 48px Georgia, serif';
           ctx.textAlign = 'center';
+          ctx.textBaseline = 'alphabetic';
           ctx.fillStyle = sel.fondo === 'marino' ? '#ffffff' : '#5c1523';
           ctx.fillText(sel.nombre.trim(), SIZE / 2, Math.min(fraseBottom + 55, SIZE - 30));
         }
@@ -248,23 +246,6 @@ export default function PastelizateApp() {
             </div>
 
             <div>
-              <p className="mb-2 text-sm font-semibold text-vino-900">Sombrero</p>
-              <div className="flex flex-wrap gap-2">
-                {SOMBREROS.map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => update('sombrero', s.id)}
-                    className={`chip ${sel.sombrero === s.id ? 'chip-active' : 'chip-idle'}`}
-                  >
-                    {s.emoji ? <span className="mr-1">{s.emoji}</span> : null}
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
               <p className="mb-2 text-sm font-semibold text-vino-900">Gafas</p>
               <div className="flex flex-wrap gap-2">
                 {GAFAS.map((g) => (
@@ -299,19 +280,17 @@ export default function PastelizateApp() {
             </div>
 
             <div>
-              <p className="mb-2 text-sm font-semibold text-vino-900">Frase</p>
-              <div className="flex flex-wrap gap-2">
-                {FRASES.map((f) => (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => update('frase', f.id)}
-                    className={`chip ${sel.frase === f.id ? 'chip-active' : 'chip-idle'}`}
-                  >
-                    {f.label}
-                  </button>
-                ))}
-              </div>
+              <label className="mb-2 block text-sm font-semibold text-vino-900">
+                Frase (opcional)
+              </label>
+              <input
+                type="text"
+                maxLength={40}
+                value={sel.frase}
+                onChange={(e) => update('frase', e.target.value)}
+                placeholder="Ej. Hecho con amor"
+                className="w-full rounded-2xl border border-vino-100 bg-white px-4 py-2 text-sm text-vino-900 outline-none focus:border-vino-400"
+              />
             </div>
 
             <div>
