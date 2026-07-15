@@ -1,7 +1,7 @@
 # Pastelízate 🥟
 
-Mini app web para elegir y personalizar un pastelito (empanada dominicana) a partir
-de una galería de stickers reales, y descargarlo como PNG.
+Armador web para construir un pastelito (empanada dominicana) pieza por pieza y
+descargarlo como sticker PNG.
 
 Construida con Next.js 14 (App Router) + TypeScript + Tailwind. 100% del lado del
 cliente: no usa ninguna API de IA ni backend, así que no tiene costos por uso ni
@@ -9,10 +9,15 @@ necesita configuración de claves.
 
 ## Funcionalidad
 
-- Filtros por chips (expresión, sombrero, accesorio, frase) sobre una galería de
-  25 stickers reales recortados de la hoja de referencia.
-- Selección de fondo (color o transparente).
-- Nombre opcional superpuesto en el sticker.
+- 3 cuerpos base (fotos reales, fondo removido): Saludando, Bailando, Paz y amor.
+- Expresiones faciales: recortes reales de la hoja de referencia (feliz, guiño,
+  sorpresa, relax) con bordes suavizados y desenfoque radial para que encajen sin
+  costuras sobre cualquier base. "Enamorado" combina la foto feliz con ojos de
+  corazón dibujados encima.
+- Sombrero, gafas, banderas (RD y PR), bate y coco: dibujados 100% de forma
+  vectorial en `<canvas>` (no son recortes de fotos), para que escalen y se
+  posicionen bien sobre cualquier cuerpo base sin artefactos de recorte.
+- Frases opcionales, selección de fondo (color o transparente) y nombre opcional.
 - Todo se compone en un `<canvas>` en el navegador y se descarga como PNG con un
   clic — no hay llamadas a servidores externos, no hay límites de uso ni costos.
 
@@ -37,17 +42,20 @@ Abre http://localhost:3000
 
 ```
 app/
-  components/PastelizateApp.tsx -> galería, filtros, canvas y descarga
-  page.tsx, layout.tsx, globals.css
+  components/PastelizateApp.tsx -> UI de selección + composición en canvas + descarga
 lib/
-  stickers.ts -> catálogo de stickers y sus etiquetas para los filtros
+  pieces.ts      -> catálogo de bases, expresiones, sombreros, gafas, accesorios, frases, fondos
+  drawPieces.ts  -> funciones que dibujan sombrero, gafas, banderas, bate y coco en canvas
 public/
-  stickers/ -> los 25 PNG recortados de la hoja de referencia
+  bases/  -> 3 cuerpos base (PNG, fondo removido)
+  faces/  -> expresiones faciales recortadas de la hoja de referencia
+  pieces/ -> banners de frase
 ```
 
-## Agregar o cambiar stickers
+## Notas sobre las expresiones
 
-Cada sticker es un PNG con fondo transparente en `public/stickers/`. Para agregar
-uno nuevo, guarda el archivo ahí y agrégalo al arreglo `STICKERS` en
-`lib/stickers.ts`, con sus etiquetas (`expresion`, `sombrero`, `accesorio`,
-`frase`) para que aparezca correctamente al filtrar.
+"Sorpresa" no tiene un recorte de referencia con ojos/boca genuinamente
+sorprendidos, así que usa la mejor aproximación disponible en la hoja original.
+"Enamorado" es un híbrido: la foto de la expresión feliz con ojos de corazón
+dibujados encima. Ambas quedaron bien integradas visualmente, pero no son un
+recorte 1:1 de una expresión "sorprendida" o "enamorada" real.
