@@ -119,10 +119,10 @@ export default function PastelizateApp() {
         if (expresionObj.file) {
           const faceImg = await loadImage(expresionObj.file);
           if (cancelled) return;
-          const fW = faceW * 2.55;
+          const fW = faceW * 1.35;
           const fH = faceImg.height * (fW / faceImg.width);
           const fX = faceCx - fW / 2;
-          const fY = faceCy - fH * 0.46;
+          const fY = faceCy - fH * 0.42;
           ctx.drawImage(faceImg, fX, fY, fW, fH);
         }
 
