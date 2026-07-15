@@ -15,7 +15,7 @@ export type Base = {
 export const BASES: Base[] = [
   { id: 'base_1', label: 'Saludando', file: '/bases/base_1.png', face: { x: 0.48, y: 0.355, w: 0.42 } },
   { id: 'base_2', label: 'Bailando', file: '/bases/base_2.png', face: { x: 0.425, y: 0.355, w: 0.44 } },
-  { id: 'base_3', label: 'Paz y amor', file: '/bases/base_3.png', face: { x: 0.38, y: 0.355, w: 0.44 } },
+  { id: 'base_3', label: 'Paz y amor', file: '/bases/base_3.png', face: { x: 0.44, y: 0.355, w: 0.44 } },
 ];
 
 // Cada expresión es un recorte real de la hoja de referencia con relleno/aire
@@ -43,7 +43,7 @@ export const EXPRESIONES: Expresion[] = [
   { id: 'feliz', label: 'Feliz', emoji: '😄', file: '/faces/face_feliz.png', eyeMidX: 0.396, eyeMidY: 0.538, eyeDist: 0.345 },
   { id: 'guino', label: 'Guiño coqueto', emoji: '😉', file: '/faces/face_guino.png', eyeMidX: 0.564, eyeMidY: 0.458, eyeDist: 0.345 },
   { id: 'sorpresa', label: 'Sorpresa', emoji: '😲', file: '/faces/face_sorpresa.png', eyeMidX: 0.326, eyeMidY: 0.522, eyeDist: 0.291 },
-  { id: 'enamorado', label: 'Enamorado', emoji: '😍', file: '/faces/face_enamorado.png', eyeMidX: 0.503, eyeMidY: 0.519, eyeDist: 0.181 },
+  { id: 'enamorado', label: 'Enamorado', emoji: '😍', file: '/faces/face_enamorado.png', eyeMidX: 0.503, eyeMidY: 0.492, eyeDist: 0.199 },
   { id: 'relax', label: 'Relax', emoji: '😌', file: '/faces/face_relax.png', eyeMidX: 0.496, eyeMidY: 0.566, eyeDist: 0.365 },
 ];
 
