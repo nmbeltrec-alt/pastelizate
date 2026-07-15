@@ -42,9 +42,11 @@ export type Expresion = {
 export const EXPRESIONES: Expresion[] = [
   { id: 'feliz', label: 'Feliz', emoji: '😄', file: '/faces/face_feliz.png', eyeMidX: 0.396, eyeMidY: 0.538, eyeDist: 0.345 },
   { id: 'guino', label: 'Guiño coqueto', emoji: '😉', file: '/faces/face_guino.png', eyeMidX: 0.474, eyeMidY: 0.458, eyeDist: 0.345 },
-  { id: 'sorpresa', label: 'Sorpresa', emoji: '😲', file: '/faces/face_sorpresa.png', eyeMidX: 0.502, eyeMidY: 0.5, eyeDist: 0.254 },
+  { id: 'sorpresa', label: 'Sorpresa', emoji: '😲', file: '/faces/face_sorpresa.png', eyeMidX: 0.499, eyeMidY: 0.373, eyeDist: 0.295 },
   { id: 'enamorado', label: 'Enamorado', emoji: '😍', file: '/faces/face_enamorado.png', eyeMidX: 0.5, eyeMidY: 0.491, eyeDist: 0.314 },
   { id: 'relax', label: 'Relax', emoji: '😌', file: '/faces/face_relax.png', eyeMidX: 0.496, eyeMidY: 0.566, eyeDist: 0.365 },
+  { id: 'risa', label: 'Risa', emoji: '😂', file: '/faces/face_risa.png', eyeMidX: 0.466, eyeMidY: 0.355, eyeDist: 0.3125 },
+  { id: 'beso', label: 'Beso', emoji: '😘', file: '/faces/face_beso.png', eyeMidX: 0.398, eyeMidY: 0.66, eyeDist: 0.28 },
 ];
 
 export type PiezaDibujada = {
