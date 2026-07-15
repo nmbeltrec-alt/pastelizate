@@ -43,7 +43,7 @@ export const EXPRESIONES: Expresion[] = [
   { id: 'feliz', label: 'Feliz', emoji: '😄', file: '/faces/face_feliz.png', eyeMidX: 0.396, eyeMidY: 0.538, eyeDist: 0.345 },
   { id: 'guino', label: 'Guiño coqueto', emoji: '😉', file: '/faces/face_guino.png', eyeMidX: 0.564, eyeMidY: 0.458, eyeDist: 0.345 },
   { id: 'sorpresa', label: 'Sorpresa', emoji: '😲', file: '/faces/face_sorpresa.png', eyeMidX: 0.326, eyeMidY: 0.522, eyeDist: 0.291 },
-  { id: 'enamorado', label: 'Enamorado', emoji: '😍', file: '/faces/face_enamorado.png', eyeMidX: 0.562, eyeMidY: 0.295, eyeDist: 0.385 },
+  { id: 'enamorado', label: 'Enamorado', emoji: '😍', file: '/faces/face_enamorado.png', eyeMidX: 0.553, eyeMidY: 0.415, eyeDist: 0.331 },
   { id: 'relax', label: 'Relax', emoji: '😌', file: '/faces/face_relax.png', eyeMidX: 0.496, eyeMidY: 0.566, eyeDist: 0.365 },
 ];
 
