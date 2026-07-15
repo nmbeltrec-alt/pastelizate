@@ -41,9 +41,9 @@ export type Expresion = {
 // (no a ojo), para que el punto medio y la distancia entre ojos sean exactos.
 export const EXPRESIONES: Expresion[] = [
   { id: 'feliz', label: 'Feliz', emoji: '😄', file: '/faces/face_feliz.png', eyeMidX: 0.396, eyeMidY: 0.538, eyeDist: 0.345 },
-  { id: 'guino', label: 'Guiño coqueto', emoji: '😉', file: '/faces/face_guino.png', eyeMidX: 0.564, eyeMidY: 0.458, eyeDist: 0.345 },
-  { id: 'sorpresa', label: 'Sorpresa', emoji: '😲', file: '/faces/face_sorpresa.png', eyeMidX: 0.326, eyeMidY: 0.522, eyeDist: 0.291 },
-  { id: 'enamorado', label: 'Enamorado', emoji: '😍', file: '/faces/face_enamorado.png', eyeMidX: 0.503, eyeMidY: 0.492, eyeDist: 0.199 },
+  { id: 'guino', label: 'Guiño coqueto', emoji: '😉', file: '/faces/face_guino.png', eyeMidX: 0.474, eyeMidY: 0.458, eyeDist: 0.345 },
+  { id: 'sorpresa', label: 'Sorpresa', emoji: '😲', file: '/faces/face_sorpresa.png', eyeMidX: 0.488, eyeMidY: 0.483, eyeDist: 0.345 },
+  { id: 'enamorado', label: 'Enamorado', emoji: '😍', file: '/faces/face_enamorado.png', eyeMidX: 0.5, eyeMidY: 0.491, eyeDist: 0.314 },
   { id: 'relax', label: 'Relax', emoji: '😌', file: '/faces/face_relax.png', eyeMidX: 0.496, eyeMidY: 0.566, eyeDist: 0.365 },
 ];
 
