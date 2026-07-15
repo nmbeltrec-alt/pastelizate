@@ -8,7 +8,7 @@ import { drawAccesorio, drawGafasSol, AccesorioId } from '@/lib/drawPieces';
 // entre ojos en el canvas final. Es el único número que hay que tocar si
 // alguna vez se quiere que las expresiones se vean un poco más grandes o
 // pequeñas sobre el cuerpo — afecta a todas las expresiones por igual.
-const EYE_DIST_FACTOR = 0.54;
+const EYE_DIST_FACTOR = 0.30;
 
 type Seleccion = {
   base: string;

@@ -37,12 +37,14 @@ export type Expresion = {
   eyeDist: number;
 };
 
+// Valores medidos automáticamente ubicando el centro real de cada pupila
+// (no a ojo), para que el punto medio y la distancia entre ojos sean exactos.
 export const EXPRESIONES: Expresion[] = [
-  { id: 'feliz', label: 'Feliz', emoji: '😄', file: '/faces/face_feliz.png', eyeMidX: 0.37, eyeMidY: 0.465, eyeDist: 0.40 },
-  { id: 'guino', label: 'Guiño coqueto', emoji: '😉', file: '/faces/face_guino.png', eyeMidX: 0.465, eyeMidY: 0.365, eyeDist: 0.43 },
-  { id: 'sorpresa', label: 'Sorpresa', emoji: '😲', file: '/faces/face_sorpresa.png', eyeMidX: 0.305, eyeMidY: 0.465, eyeDist: 0.35 },
-  { id: 'enamorado', label: 'Enamorado', emoji: '😍', file: '/faces/face_enamorado.png', eyeMidX: 0.505, eyeMidY: 0.333, eyeDist: 0.337 },
-  { id: 'relax', label: 'Relax', emoji: '😌', file: '/faces/face_relax.png', eyeMidX: 0.475, eyeMidY: 0.41, eyeDist: 0.41 },
+  { id: 'feliz', label: 'Feliz', emoji: '😄', file: '/faces/face_feliz.png', eyeMidX: 0.396, eyeMidY: 0.538, eyeDist: 0.345 },
+  { id: 'guino', label: 'Guiño coqueto', emoji: '😉', file: '/faces/face_guino.png', eyeMidX: 0.564, eyeMidY: 0.458, eyeDist: 0.345 },
+  { id: 'sorpresa', label: 'Sorpresa', emoji: '😲', file: '/faces/face_sorpresa.png', eyeMidX: 0.326, eyeMidY: 0.522, eyeDist: 0.291 },
+  { id: 'enamorado', label: 'Enamorado', emoji: '😍', file: '/faces/face_enamorado.png', eyeMidX: 0.562, eyeMidY: 0.295, eyeDist: 0.385 },
+  { id: 'relax', label: 'Relax', emoji: '😌', file: '/faces/face_relax.png', eyeMidX: 0.496, eyeMidY: 0.566, eyeDist: 0.365 },
 ];
 
 export type PiezaDibujada = {
