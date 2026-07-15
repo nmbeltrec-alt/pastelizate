@@ -6,11 +6,12 @@ import {
   BASES,
   EXPRESIONES,
   FONDOS,
+  FRASE_IMG,
   FRASES,
   GAFAS,
   SOMBREROS,
 } from '@/lib/pieces';
-import { drawFace } from '@/lib/drawFace';
+import { drawAccesorio, drawGafasSol, drawSombreroTropical, AccesorioId } from '@/lib/drawPieces';
 
 type Seleccion = {
   base: string;
@@ -33,6 +34,21 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
+function drawHeartEye(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
+  ctx.fillStyle = '#c23b4a';
+  ctx.beginPath();
+  const s = r * 0.95;
+  ctx.moveTo(x, y + s * 0.6);
+  ctx.bezierCurveTo(x - s, y - s * 0.4, x - s * 0.5, y - s, x, y - s * 0.25);
+  ctx.bezierCurveTo(x + s * 0.5, y - s, x + s, y - s * 0.4, x, y + s * 0.6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.beginPath();
+  ctx.ellipse(x - s * 0.28, y - s * 0.25, s * 0.14, s * 0.18, -0.5, 0, Math.PI * 2);
+  ctx.fill();
+}
+
 export default function PastelizateApp() {
   const [sel, setSel] = useState<Seleccion>({
     base: BASES[2].id,
@@ -48,6 +64,10 @@ export default function PastelizateApp() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const baseObj = useMemo(() => BASES.find((b) => b.id === sel.base)!, [sel.base]);
+  const expresionObj = useMemo(
+    () => EXPRESIONES.find((e) => e.id === sel.expresion)!,
+    [sel.expresion]
+  );
 
   function update<K extends keyof Seleccion>(key: K, value: Seleccion[K]) {
     setSel((s) => ({ ...s, [key]: value }));
@@ -95,55 +115,48 @@ export default function PastelizateApp() {
         const faceCy = y + baseObj.face.y * h;
         const faceW = baseObj.face.w * w;
 
-        drawFace(ctx, sel.expresion, { cx: faceCx, cy: faceCy, w: faceW });
-
-        // sombrero: se posiciona encima de la cabeza
-        const sombrero = SOMBREROS.find((s) => s.id === sel.sombrero);
-        if (sombrero?.file) {
-          const hatImg = await loadImage(sombrero.file);
+        // expresión: recorte real de foto, escalado sobre la cara
+        if (expresionObj.file) {
+          const faceImg = await loadImage(expresionObj.file);
           if (cancelled) return;
-          const hatW = faceW * 2.05;
-          const hatH = hatImg.height * (hatW / hatImg.width);
-          const hatX = faceCx - hatW / 2;
+          const fW = faceW * 2.55;
+          const fH = faceImg.height * (fW / faceImg.width);
+          const fX = faceCx - fW / 2;
+          const fY = faceCy - fH * 0.46;
+          ctx.drawImage(faceImg, fX, fY, fW, fH);
+        }
+
+        // enamorado: ojos de corazón dibujados sobre la foto feliz
+        if (sel.expresion === 'enamorado') {
+          const eyeR = faceW * 0.15;
+          const eyeDx = faceW * 0.24;
+          drawHeartEye(ctx, faceCx - eyeDx, faceCy, eyeR);
+          drawHeartEye(ctx, faceCx + eyeDx, faceCy, eyeR);
+        }
+
+        // sombrero: dibujado, encima de la cabeza
+        if (sel.sombrero === 'tropical') {
           const hatBottomY = y + h * 0.13;
-          const hatY = hatBottomY - hatH * 0.88;
-          ctx.drawImage(hatImg, hatX, hatY, hatW, hatH);
+          drawSombreroTropical(ctx, faceCx, hatBottomY, faceW);
         }
 
-        // gafas: sobre los ojos
-        const gafas = GAFAS.find((g) => g.id === sel.gafas);
-        if (gafas?.file) {
-          const glImg = await loadImage(gafas.file);
-          if (cancelled) return;
-          const glW = faceW * 1.05;
-          const glH = glImg.height * (glW / glImg.width);
-          const glX = faceCx - glW / 2;
-          const glY = faceCy - glH / 2 + faceW * 0.02;
-          ctx.drawImage(glImg, glX, glY, glW, glH);
+        // gafas: dibujadas, sobre los ojos
+        if (sel.gafas === 'sol') {
+          drawGafasSol(ctx, faceCx, faceCy, faceW);
         }
 
-        // accesorio: insignia flotante abajo a la derecha del personaje
-        const accesorio = ACCESORIOS.find((a) => a.id === sel.accesorio);
-        if (accesorio?.file) {
-          const accImg = await loadImage(accesorio.file);
-          if (cancelled) return;
-          const accW = w * 0.42;
-          const accH = accImg.height * (accW / accImg.width);
-          const accX = x + w * 0.68;
-          const accY = y + h * 0.62;
-          ctx.save();
-          ctx.shadowColor = 'rgba(58,13,22,0.25)';
-          ctx.shadowBlur = 18;
-          ctx.shadowOffsetY = 6;
-          ctx.drawImage(accImg, accX, accY, accW, accH);
-          ctx.restore();
+        // accesorio: dibujado, insignia flotante abajo a la derecha
+        if (sel.accesorio !== 'ninguno') {
+          const accX = x + w * 0.82;
+          const accY = y + h * 0.78;
+          drawAccesorio(ctx, sel.accesorio as AccesorioId, accX, accY, w * 0.36);
         }
 
-        // frase: banner debajo del personaje
-        const frase = FRASES.find((f) => f.id === sel.frase);
+        // frase: banner recortado, debajo del personaje
         let fraseBottom = y + h;
-        if (frase?.file) {
-          const frImg = await loadImage(frase.file);
+        const fraseFile = FRASE_IMG[sel.frase];
+        if (fraseFile) {
+          const frImg = await loadImage(fraseFile);
           if (cancelled) return;
           const frW = w * 0.85;
           const frH = frImg.height * (frW / frImg.width);
@@ -169,7 +182,7 @@ export default function PastelizateApp() {
     return () => {
       cancelled = true;
     };
-  }, [sel, baseObj]);
+  }, [sel, baseObj, expresionObj]);
 
   function descargar() {
     if (!previewUrl) return;
