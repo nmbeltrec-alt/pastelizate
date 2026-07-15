@@ -14,7 +14,7 @@ export type Base = {
 
 export const BASES: Base[] = [
   { id: 'base_1', label: 'Saludando', file: '/bases/base_1.png', face: { x: 0.48, y: 0.355, w: 0.42 } },
-  { id: 'base_2', label: 'Bailando', file: '/bases/base_2.png', face: { x: 0.425, y: 0.355, w: 0.44 } },
+  { id: 'base_2', label: 'Bailando', file: '/bases/base_2.png', face: { x: 0.487, y: 0.355, w: 0.44 } },
   { id: 'base_3', label: 'Paz y amor', file: '/bases/base_3.png', face: { x: 0.44, y: 0.355, w: 0.44 } },
 ];
 
