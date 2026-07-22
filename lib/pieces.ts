@@ -5,17 +5,42 @@
 
 export type FaceAnchor = { x: number; y: number; w: number };
 
+// Sombra de contacto dibujada debajo de los pies, para que el pastelito no
+// se vea "flotando" sobre ningún fondo (color o foto). cx/cy/rx/ry son
+// fracciones del ancho/alto de la propia base (igual que face), y opacity
+// es la opacidad máxima en el centro de la sombra.
+export type ShadowAnchor = { cx: number; cy: number; rx: number; ry: number; opacity: number };
+
 export type Base = {
   id: string;
   label: string;
   file: string;
   face: FaceAnchor;
+  shadow: ShadowAnchor;
 };
 
 export const BASES: Base[] = [
-  { id: 'base_1', label: 'Saludando', file: '/bases/base_1.png', face: { x: 0.48, y: 0.355, w: 0.42 } },
-  { id: 'base_2', label: 'Bailando', file: '/bases/base_2.png', face: { x: 0.487, y: 0.355, w: 0.44 } },
-  { id: 'base_3', label: 'Paz y amor', file: '/bases/base_3.png', face: { x: 0.44, y: 0.355, w: 0.44 } },
+  {
+    id: 'base_1',
+    label: 'Saludando',
+    file: '/bases/base_1.png',
+    face: { x: 0.48, y: 0.355, w: 0.42 },
+    shadow: { cx: 0.527, cy: 0.99, rx: 0.26, ry: 0.05, opacity: 0.4 },
+  },
+  {
+    id: 'base_2',
+    label: 'Bailando',
+    file: '/bases/base_2.png',
+    face: { x: 0.487, y: 0.355, w: 0.44 },
+    shadow: { cx: 0.6, cy: 0.965, rx: 0.32, ry: 0.06, opacity: 0.4 },
+  },
+  {
+    id: 'base_3',
+    label: 'Paz y amor',
+    file: '/bases/base_3.png',
+    face: { x: 0.44, y: 0.355, w: 0.44 },
+    shadow: { cx: 0.4375, cy: 0.985, rx: 0.24, ry: 0.05, opacity: 0.4 },
+  },
 ];
 
 // Cada expresión es un recorte real de la hoja de referencia con relleno/aire
