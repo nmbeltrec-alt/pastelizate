@@ -57,17 +57,21 @@ export const GAFAS: PiezaDibujada[] = [
   { id: 'sol', label: 'De sol', emoji: '😎' },
 ];
 
-export const ACCESORIOS: PiezaDibujada[] = [
-  { id: 'ninguno', label: 'Ninguno', emoji: '' },
-  { id: 'bandera-rd', label: 'Bandera RD', emoji: '🇩🇴' },
-  { id: 'bandera-pr', label: 'Bandera PR', emoji: '🇵🇷' },
-  { id: 'coco', label: 'Coco', emoji: '🥥' },
-];
+export type Fondo = {
+  id: string;
+  label: string;
+  color: string | null;
+  image?: string;
+};
 
-export const FONDOS = [
+export const FONDOS: Fondo[] = [
   { id: 'crema', label: 'Crema', color: '#f8efdc' },
   { id: 'rosa', label: 'Rosa pastel', color: '#f6c9d6' },
   { id: 'marino', label: 'Azul marino', color: '#0b2545' },
   { id: 'verde-palma', label: 'Verde palma', color: '#4c7a4a' },
-  { id: 'transparente', label: 'Transparente', color: null as string | null },
-] as const;
+  { id: 'transparente', label: 'Transparente', color: null },
+  { id: 'sd-1', label: 'Santo Domingo', color: null, image: '/fondos/fondo_sd1.png' },
+  { id: 'sd-2', label: 'Zona Colonial', color: null, image: '/fondos/fondo_sd2.png' },
+  { id: 'playa', label: 'Playa', color: null, image: '/fondos/fondo_playa.png' },
+  { id: 'puerto-rico', label: 'Puerto Rico', color: null, image: '/fondos/fondo_pr.png' },
+];
