@@ -112,6 +112,29 @@ export default function PastelizateApp() {
         const h = baseImg.height * scale;
         const x = (SIZE - w) / 2;
         const y = (SIZE - h) / 2;
+
+        // sombra de contacto debajo de los pies, para anclar el pastelito
+        // visualmente al fondo (color o foto) en vez de verse flotando.
+        const sh = baseObj.shadow;
+        if (sh) {
+          const scx = x + sh.cx * w;
+          const scy = y + sh.cy * h;
+          const srx = sh.rx * w;
+          const sry = sh.ry * h;
+          ctx.save();
+          ctx.translate(scx, scy);
+          ctx.scale(srx, sry);
+          const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+          grad.addColorStop(0, `rgba(20,15,10,${sh.opacity})`);
+          grad.addColorStop(0.7, `rgba(20,15,10,${sh.opacity * 0.5})`);
+          grad.addColorStop(1, 'rgba(20,15,10,0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(0, 0, 1, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
         ctx.drawImage(baseImg, x, y, w, h);
 
         const faceCx = x + baseObj.face.x * w;
