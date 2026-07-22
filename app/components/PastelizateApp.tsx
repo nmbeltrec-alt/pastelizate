@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ACCESORIOS, BASES, EXPRESIONES, FONDOS, GAFAS } from '@/lib/pieces';
-import { drawAccesorio, drawGafasSol, AccesorioId } from '@/lib/drawPieces';
+import { BASES, EXPRESIONES, FONDOS, GAFAS } from '@/lib/pieces';
+import { drawGafasSol } from '@/lib/drawPieces';
 
 // Fracción del "ancho de cara" de cada base que define la distancia objetivo
 // entre ojos en el canvas final. Es el único número que hay que tocar si
@@ -14,7 +14,6 @@ type Seleccion = {
   base: string;
   expresion: string;
   gafas: string;
-  accesorio: string;
   frase: string;
   fondo: string;
   nombre: string;
@@ -35,7 +34,6 @@ export default function PastelizateApp() {
     base: BASES[2].id,
     expresion: 'feliz',
     gafas: 'ninguna',
-    accesorio: 'ninguno',
     frase: '',
     fondo: 'crema',
     nombre: '',
@@ -67,14 +65,39 @@ export default function PastelizateApp() {
       ctx.clearRect(0, 0, SIZE, SIZE);
 
       const fondoObj = FONDOS.find((f) => f.id === sel.fondo);
-      if (fondoObj?.color) {
-        ctx.fillStyle = fondoObj.color;
-        ctx.beginPath();
-        ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2 - 10, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.lineWidth = 14;
-        ctx.strokeStyle = '#ffffff';
-        ctx.stroke();
+      const fondoR = SIZE / 2 - 10;
+
+      try {
+        if (fondoObj?.image) {
+          // fondo de imagen: recorte circular tipo "cover" (llena el círculo
+          // sin deformarse, recortando el sobrante) centrado en el canvas.
+          const fondoImg = await loadImage(fondoObj.image);
+          if (cancelled) return;
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(SIZE / 2, SIZE / 2, fondoR, 0, Math.PI * 2);
+          ctx.clip();
+          const coverScale = Math.max(SIZE / fondoImg.width, SIZE / fondoImg.height);
+          const fw = fondoImg.width * coverScale;
+          const fh = fondoImg.height * coverScale;
+          ctx.drawImage(fondoImg, (SIZE - fw) / 2, (SIZE - fh) / 2, fw, fh);
+          ctx.restore();
+          ctx.beginPath();
+          ctx.arc(SIZE / 2, SIZE / 2, fondoR, 0, Math.PI * 2);
+          ctx.lineWidth = 14;
+          ctx.strokeStyle = '#ffffff';
+          ctx.stroke();
+        } else if (fondoObj?.color) {
+          ctx.fillStyle = fondoObj.color;
+          ctx.beginPath();
+          ctx.arc(SIZE / 2, SIZE / 2, fondoR, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.lineWidth = 14;
+          ctx.strokeStyle = '#ffffff';
+          ctx.stroke();
+        }
+      } catch {
+        // si el fondo falla en cargar, seguimos sin fondo (transparente)
       }
 
       try {
@@ -116,13 +139,6 @@ export default function PastelizateApp() {
         // gafas: dibujadas, sobre los ojos
         if (sel.gafas === 'sol') {
           drawGafasSol(ctx, faceCx, faceCy, faceW);
-        }
-
-        // accesorio: dibujado, insignia flotante abajo a la derecha
-        if (sel.accesorio !== 'ninguno') {
-          const accX = x + w * 0.74;
-          const accY = y + h * 0.74;
-          drawAccesorio(ctx, sel.accesorio as AccesorioId, accX, accY, w * 0.32);
         }
 
         // frase: texto libre en un banner debajo del personaje
@@ -263,23 +279,6 @@ export default function PastelizateApp() {
             </div>
 
             <div>
-              <p className="mb-2 text-sm font-semibold text-vino-900">En la mano / accesorio</p>
-              <div className="flex flex-wrap gap-2">
-                {ACCESORIOS.map((a) => (
-                  <button
-                    key={a.id}
-                    type="button"
-                    onClick={() => update('accesorio', a.id)}
-                    className={`chip ${sel.accesorio === a.id ? 'chip-active' : 'chip-idle'}`}
-                  >
-                    {a.emoji ? <span className="mr-1">{a.emoji}</span> : null}
-                    {a.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
               <label className="mb-2 block text-sm font-semibold text-vino-900">
                 Frase (opcional)
               </label>
@@ -308,13 +307,15 @@ export default function PastelizateApp() {
                     }`}
                   >
                     <span
-                      className="h-4 w-4 rounded-full border border-black/10"
+                      className="h-4 w-4 rounded-full border border-black/10 bg-cover bg-center"
                       style={{
                         backgroundColor: f.color ?? 'transparent',
-                        backgroundImage: f.color
-                          ? undefined
-                          : 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%)',
-                        backgroundSize: '8px 8px',
+                        backgroundImage: f.image
+                          ? `url(${f.image})`
+                          : f.color
+                            ? undefined
+                            : 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%)',
+                        backgroundSize: f.image ? 'cover' : '8px 8px',
                       }}
                     />
                     {f.label}
